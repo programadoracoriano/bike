@@ -26,7 +26,7 @@ class Profile(models.Model):
     funds    = models.FloatField(null=True, blank=True, verbose_name="Fundos")
 
     def __str__(self):
-        return self.name
+        return self.user.first_name
 
     class Meta:
         verbose_name        = 'Perfil'
@@ -67,7 +67,7 @@ class Bike(models.Model):
 Packages for user to be able to walk on the bike, this is only controlled
 by the entity that owes the bike
 """
-class UnlockPackage():
+class UnlockPackage(models.Model):
     name  = models.CharField(max_length=100, null=False, verbose_name="Nome")
     hours = models.FloatField(null=False, blank=False, verbose_name="Horas")
     price = models.FloatField(null=False, blank=False, verbose_name="Preço")
@@ -101,7 +101,7 @@ class Purchase(models.Model):
 Model for island information
 """
 class Island(models.Model):
-    name            = models.CharField(max_length="150", null=False, blank=False, 
+    name            = models.CharField(max_length=150, null=False, blank=False, 
                             verbose_name="Ilha")
     description_pt  = models.TextField(null=True, blank=True, 
                                        verbose_name="Descrição da Ilha")
