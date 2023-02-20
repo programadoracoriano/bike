@@ -2,8 +2,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
-from datetime import date
-
+from django_resized import ResizedImageField
 # Create your models here.
 
 """
@@ -56,19 +55,66 @@ class Bike(models.Model):
                                     verbose_name="Estado")
     notes        = models.TextField(null=True, blank=True, verbose_name="Notas")
 
+    def __str__(self):
+        return self.serie_number
+    
     class Meta:
         verbose_name        = 'Bicicleta'
         verbose_name_plural = 'Bicicletas' 
 
+
+"""
+Packages for user to be able to walk on the bike, this is only controlled
+by the entity that owes the bike
+"""
 class UnlockPackage():
     name  = models.CharField(max_length=100, null=False, verbose_name="Nome")
     hours = models.FloatField(null=False, blank=False, verbose_name="Horas")
     price = models.FloatField(null=False, blank=False, verbose_name="Preço")
-
+    
+    def __str__(self):
+        return self.name
+    
     class Meta:
         verbose_name        = 'Pacote'
         verbose_name_plural = 'Pacotes'
+
+
+"""
+Purchase models, this will have the user purchase values
+"""
+class Purchase(models.Model):
+    user    = models.ForeignKey(User, null=False, blank=False, 
+                             verbose_name="Utilizador", on_delete=models.CASCADE)
+    bike    = models.ForeignKey(Bike, null=False, blank=False, 
+                             verbose_name="Bicicleta", on_delete=models.CASCADE)
+    package = models.ForeignKey(UnlockPackage, null=False, blank=False,
+                                verbose_name="Pacote", on_delete=models.CASCADE)
+    date    = models.DateTimeField(null=False, blank=False, 
+                                   verbose_name="Data e Hora")
     
+    class Meta:
+        verbose_name        = 'Compra do Utilizador'
+        verbose_name_plural = 'Compras do utilizador'
+
+"""
+Model for island information
+"""
+class Island(models.Model):
+    name            = models.CharField(max_length="150", null=False, blank=False, 
+                            verbose_name="Ilha")
+    description_pt  = models.TextField(null=True, blank=True, 
+                                       verbose_name="Descrição da Ilha")
+    image           =  ResizedImageField(size=[100, 150], upload_to='island', 
+                                         force_format='WEBP', quality=90,
+                                         keep_meta=False)
+    
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name        = 'Ilha'
+        verbose_name_plural = 'Ilhas'
 
 
 
