@@ -3,6 +3,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
 from django_resized import ResizedImageField
+from django.conf import settings
 # Create your models here.
 
 """
@@ -48,7 +49,7 @@ like serial numbers, date that was bought, status of bike
 """
 class Bike(models.Model):
     serie_number = models.CharField(max_length=500, null=False, blank=False, 
-                                   verbose_name="Número de série")
+                                   verbose_name="Número de série", unique=True)
     date_bought  = models.DateField(null=False, blank=False, 
                                     verbose_name="Data de Compra")
     status       = models.CharField(max_length=100, null=False, blank=False, 
@@ -104,10 +105,17 @@ class Island(models.Model):
     name            = models.CharField(max_length=150, null=False, blank=False, 
                             verbose_name="Ilha")
     description_pt  = models.TextField(null=True, blank=True, 
-                                       verbose_name="Descrição da Ilha")
-    image           =  ResizedImageField(size=[100, 150], upload_to='island', 
+                                    verbose_name="Descrição da Ilha(Português)")
+    description_eb  = models.TextField(null=True, blank=True, 
+                                    verbose_name="Descrição da Ilha(Inglês)")
+    image           =  ResizedImageField(size=[200, 200], upload_to='island', 
                                          force_format='WEBP', quality=90,
-                                         keep_meta=False)
+                                         keep_meta=False, null=True, blank=True)
+    
+    @property
+    def image_url(self):
+        return "{0}{1}".format(settings.SITE_URL, self.image.url)
+
     
     def __str__(self):
         return self.name
