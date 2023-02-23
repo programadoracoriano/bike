@@ -5,7 +5,11 @@ from rest_framework import serializers
 from rest_framework.fields import CurrentUserDefault, ImageField
 from .models import *
 from django.contrib.auth.models import User
-from rest_framework.serializers import ReadOnlyField
+
+
+
+
+
 
 #User serializer
 class UserSerializer(serializers.ModelSerializer):
